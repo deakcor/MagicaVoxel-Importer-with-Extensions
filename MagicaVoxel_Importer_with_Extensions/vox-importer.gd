@@ -1,6 +1,8 @@
 tool
 extends EditorImportPlugin
 
+class_name VoxImporter
+
 const VoxFile = preload("./VoxFile.gd");
 const VoxData = preload("./VoxFormat/VoxData.gd");
 const VoxNode = preload("./VoxFormat/VoxNode.gd");
@@ -55,6 +57,11 @@ func get_option_visibility(_option, _options):
 	return true
 
 func import(source_path, destination_path, options, _platforms, _gen_files):
+	var mesh = import_mesh(source_path,options)
+	var full_path = "%s.%s" % [ destination_path, get_save_extension() ]
+	return ResourceSaver.save(full_path, mesh)
+
+func import_mesh(path,options)->Mesh:
 	var scale = 0.1
 	if options.Scale:
 		scale = float(options.Scale)
@@ -90,10 +97,7 @@ func import(source_path, destination_path, options, _platforms, _gen_files):
 		mesh = GreedyMeshGenerator.new().generate(vox, voxel_data, scale, snaptoground)
 	else:
 		mesh = CulledMeshGenerator.new().generate(vox, voxel_data, scale, snaptoground)
-
-	var full_path = "%s.%s" % [ destination_path, get_save_extension() ]
-	return ResourceSaver.save(full_path, mesh)
-
+	return mesh
 
 func string_to_vector3(input: String) -> Vector3:
 	var data = input.split_floats(' ');
