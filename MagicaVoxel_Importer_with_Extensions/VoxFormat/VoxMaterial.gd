@@ -1,3 +1,5 @@
+class_name VoxMaterial
+
 var properties = null;
 var material: SpatialMaterial = null;
 

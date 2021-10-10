@@ -1,3 +1,5 @@
+class_name VoxData
+
 const Model = preload("./Model.gd");
 
 var models = {0: Model.new()};

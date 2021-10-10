@@ -1,3 +1,5 @@
+class_name VoxNode
+
 var id: int;
 var attributes = {};
 var child_nodes = [];

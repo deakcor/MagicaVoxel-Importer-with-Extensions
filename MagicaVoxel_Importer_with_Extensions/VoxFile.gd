@@ -1,3 +1,5 @@
+class_name VoxFile
+
 var file: File;
 var chunk_size = 0;
 

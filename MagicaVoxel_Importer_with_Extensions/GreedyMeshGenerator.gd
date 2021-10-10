@@ -1,3 +1,5 @@
+class_name GreedyMeshGenerator
+
 const Faces = preload("./Faces.gd")
 const VoxData = preload("./VoxFormat/VoxData.gd")
 const vox_to_godot = Basis(Vector3.RIGHT, Vector3.FORWARD, Vector3.UP)
