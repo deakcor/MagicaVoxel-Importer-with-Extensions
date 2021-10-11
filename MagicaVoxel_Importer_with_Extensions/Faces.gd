@@ -1,3 +1,5 @@
+class_name VoxFaces
+
 const Top = [
 	Vector3( 1.0000, 1.0000, 1.0000),
 	Vector3( 0.0000, 1.0000, 1.0000),

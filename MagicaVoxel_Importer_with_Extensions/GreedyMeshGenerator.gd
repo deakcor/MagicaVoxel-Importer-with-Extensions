@@ -1,7 +1,5 @@
 class_name GreedyMeshGenerator
 
-const Faces = preload("./Faces.gd")
-const VoxData = preload("./VoxFormat/VoxData.gd")
 const vox_to_godot = Basis(Vector3.RIGHT, Vector3.FORWARD, Vector3.UP)
 
 # Names for the faces by orientation
@@ -67,12 +65,12 @@ const face_checks :Array = [
 
 # An array of the face meshes by orientation
 const face_meshes :Array = [
-	Faces.Front,
-	Faces.Back,
-	Faces.Left,
-	Faces.Right,
-	Faces.Bottom,
-	Faces.Top,
+	VoxFaces.Front,
+	VoxFaces.Back,
+	VoxFaces.Left,
+	VoxFaces.Right,
+	VoxFaces.Bottom,
+	VoxFaces.Top,
 ]
 
 # The SurfaceTool the object will use to generate the mesh

@@ -3,36 +3,16 @@ class_name VoxImporter
 const debug_file = false;
 const debug_models = false;
 
-class VoxelData:
-	var data = {};
 
-	func combine(model):
-		var offset = (model.size / 2.0).floor();
-		for voxel in model.voxels:
-			data[voxel - offset] = model.voxels[voxel];
-
-	func combine_data(other):
-		for voxel in other.data:
-			data[voxel] = other.data[voxel];
-
-	func rotate(basis: Basis):
-		var new_data = {};
-		for voxel in data:
-			var half_step = Vector3(0.5, 0.5, 0.5);
-			var new_voxel = (basis.xform(voxel+half_step)-half_step).floor();
-			new_data[new_voxel] = data[voxel];
-		data = new_data;
-
-	func translate(translation: Vector3):
-		var new_data = {};
-		for voxel in data:
-			var new_voxel = voxel + translation;
-			new_data[new_voxel] = data[voxel];
-		data = new_data;
-
-static func import_mesh(path,options={"Scale":1})->Mesh:
+static func import_mesh(path,options={})->Mesh:
+	var vox:VoxData = import_vox(path)
+	var mesh = create_mesh(vox,options)
+	return mesh
+	
+static func create_mesh(vox:VoxData,options={})->Mesh:
+	var voxel_data:Dictionary = unify_voxels(vox).data
 	var scale = 0.1
-	if options.Scale:
+	if options.has("Scale"):
 		scale = float(options.Scale)
 	var greedy = true
 	if options.has("GreedyMeshGenerator"):
@@ -40,18 +20,30 @@ static func import_mesh(path,options={"Scale":1})->Mesh:
 	var snaptoground = false
 	if options.has("SnapToGround"):
 		snaptoground = bool(options.SnapToGround)
-
-
+	var mesh:Mesh
+	if greedy:
+		mesh = GreedyMeshGenerator.new().generate(vox, voxel_data, scale, snaptoground)
+	else:
+		mesh = CulledMeshGenerator.new().generate(vox, voxel_data, scale, snaptoground)
+	return mesh
+	
+static func import_vox(path)->VoxData:
 	var file = File.new()
 	var err = file.open(path, File.READ)
-
 	if err != OK:
 		if file.is_open(): file.close()
 		return err
+	
+	var data:PoolByteArray=file.get_buffer(file.get_len())
+	
+	return import_vox_from_data(data);
+
+static func import_vox_from_data(data:PoolByteArray)->VoxData:
+	var file = File.new()
+	file.store_buffer(data)
 
 	var identifier = PoolByteArray([ file.get_8(), file.get_8(), file.get_8(), file.get_8() ]).get_string_from_ascii()
-	var version = file.get_32()
-	print('Importing: ', path, ' (scale: ', scale, ', file version: ', version, ', greedy mesh: ', greedy, ', snap to ground: ', snaptoground, ')');
+	#var version = file.get_32()
 
 	var vox = VoxData.new();
 	if identifier == 'VOX ':
@@ -59,18 +51,10 @@ static func import_mesh(path,options={"Scale":1})->Mesh:
 		while voxFile.has_data_to_read():
 			read_chunk(vox, voxFile);
 	file.close()
+	return vox;
 
-	var voxel_data = unify_voxels(vox).data;
-	var mesh
-	if greedy:
-		mesh = GreedyMeshGenerator.new().generate(vox, voxel_data, scale, snaptoground)
-	else:
-		mesh = CulledMeshGenerator.new().generate(vox, voxel_data, scale, snaptoground)
-	return mesh
-
-
-static func unify_voxels(vox: VoxData):
-	var node = vox.nodes[0];
+static func unify_voxels(vox: VoxData)->VoxelData:
+	var node = vox.nodes[0] if vox.nodes.has(0) else null;
 	return get_voxels(node, vox);
 
 static func read_chunk(vox: VoxData, file: VoxFile):
@@ -170,17 +154,18 @@ static func read_chunk(vox: VoxData, file: VoxFile):
 	file.read_remaining();
 
 
-static func get_voxels(node: VoxNode, vox: VoxData):
-	var data = VoxelData.new();
-	for model_index in node.models:
-		var model = vox.models[model_index];
-		data.combine(model);
-	for child_index in node.child_nodes:
-		var child = vox.nodes[child_index];
-		var child_data = get_voxels(child, vox);
-		data.combine_data(child_data);
-	data.rotate(node.rotation.inverse());
-	data.translate(node.translation);
+static func get_voxels(node: VoxNode, vox: VoxData)->VoxelData:
+	var data:VoxelData = VoxelData.new();
+	if node:
+		for model_index in node.models:
+			var model = vox.models[model_index];
+			data.combine(model);
+		for child_index in node.child_nodes:
+			var child = vox.nodes[child_index];
+			var child_data = get_voxels(child, vox);
+			data.combine_data(child_data);
+		data.rotate(node.rotation.inverse());
+		data.translate(node.translation);
 	return data;
 
 

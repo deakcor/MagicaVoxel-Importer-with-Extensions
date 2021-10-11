@@ -1,17 +1,15 @@
 class_name VoxData
 
-const Model = preload("./Model.gd");
-
-var models = {0: Model.new()};
-var current_index = -1;
+var models := {0: VoxModel.new()};
+var current_index := -1;
 #warning-ignore:unused_class_variable
 var colors = null;
 #warning-ignore:unused_class_variable
-var nodes = {};
+var nodes := {};
 #warning-ignore:unused_class_variable
-var materials = {};
+var materials := {};
 
-func get_model():
+func get_model()->VoxModel:
 	if (!models.has(current_index)):
-		models[current_index] = Model.new();
+		models[current_index] = VoxModel.new();
 	return models[current_index];
