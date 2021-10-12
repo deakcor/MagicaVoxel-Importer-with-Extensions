@@ -94,7 +94,6 @@ static func read_chunk(vox: VoxData, file_data):
 				var a = float(file_data.get_8() / 255.0)
 				vox.colors.append(Color(r, g, b, a))
 		'nTRN':
-			print('ok')
 			var node_id = file_data.get_32()
 			var attributes = file_data.get_vox_dict()
 			var node = VoxNode.new(node_id, attributes)
