@@ -3,6 +3,10 @@ class_name VoxImporter
 const debug_file = false
 const debug_models = false
 
+static func import_mesh_from_data(data:PoolByteArray,options={})->Mesh:
+	var vox:VoxData = import_vox_from_data(data)
+	var mesh = create_mesh(vox,options)
+	return mesh
 
 static func import_mesh(path,options={})->Mesh:
 	var vox:VoxData = import_vox(path)
