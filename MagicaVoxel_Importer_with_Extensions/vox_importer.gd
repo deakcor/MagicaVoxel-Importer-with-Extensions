@@ -31,16 +31,18 @@ static func create_mesh(vox:VoxData,options={})->Mesh:
 	else:
 		mesh = CulledMeshGenerator.new().generate(vox, voxel_data, scale, snaptoground)
 	return mesh
-	
-static func import_vox(path)->VoxData:
-	var file = File.new()
-	var err = file.open(path, File.READ)
+
+static func get_data(path:String)->PoolByteArray:
+	var file := File.new()
+	var err := file.open(path, File.READ)
 	if err != OK:
 		if file.is_open(): file.close()
-		return err
+		return PoolByteArray()
 	
-	var data:PoolByteArray=file.get_buffer(file.get_len())
+	return file.get_buffer(file.get_len())
 
+static func import_vox(path:String)->VoxData:
+	var data:PoolByteArray=get_data(path)
 	return import_vox_from_data(data)
 
 static func import_vox_from_data(data:PoolByteArray)->VoxData:
