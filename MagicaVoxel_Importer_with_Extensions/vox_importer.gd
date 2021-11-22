@@ -72,7 +72,6 @@ static func read_chunk(vox: VoxData, file_data):
 	file_data.set_chunk_size(chunk_size)
 	match chunk_id:
 		'SIZE':
-			print("ok")
 			vox.current_index += 1
 			var model = vox.get_model()
 			var x = file_data.get_32()
