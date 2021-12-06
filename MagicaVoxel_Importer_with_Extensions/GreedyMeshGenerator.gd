@@ -123,7 +123,9 @@ func generate(vox :VoxData, voxel_data :Dictionary, scale :float, snaptoground :
 	material.vertex_color_use_as_albedo = true
 	material.roughness = 1
 	st.set_material(material)
-	return st.commit()
+	var mesh:=st.commit()
+	mesh.surface_set_name(0,"0")
+	return mesh
 
 # Generates all of the geometry for a given face orientation
 func generate_geometry_for_orientation(voxel_data :Dictionary, o :int, scale :float, snaptoground :bool) -> void:

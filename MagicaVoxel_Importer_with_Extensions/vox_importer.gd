@@ -13,7 +13,16 @@ static func import_mesh(path,options={})->Mesh:
 	
 	var mesh = create_mesh(vox,options)
 	return mesh
-	
+
+static func load_materials_from_data(data:PoolByteArray)->Dictionary:
+	var vox:VoxData = import_vox_from_data(data)
+	var voxel_data:Dictionary = unify_voxels(vox).data
+	var mats:={}
+	for k in voxel_data.keys():
+		var surface_index = voxel_data[voxel_data]
+		mats[surface_index]=vox.materials[surface_index]
+	return mats
+
 static func create_mesh(vox:VoxData,options={})->Mesh:
 	var voxel_data:Dictionary = unify_voxels(vox).data
 	var scale := 0.1
