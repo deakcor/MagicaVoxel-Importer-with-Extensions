@@ -15,13 +15,13 @@ func rotate(basis: Basis):
 	var new_data = {};
 	for voxel in data:
 		var half_step = Vector3(0.5, 0.5, 0.5);
-		var new_voxel = (basis.xform(voxel+half_step)-half_step).floor();
+		var new_voxel = (basis * (voxel+half_step)-half_step).floor();
 		new_data[new_voxel] = data[voxel];
 	data = new_data;
 
-func translate(translation: Vector3):
+func translate(position: Vector3):
 	var new_data = {};
 	for voxel in data:
-		var new_voxel = voxel + translation;
+		var new_voxel = voxel + position;
 		new_data[new_voxel] = data[voxel];
 	data = new_data;

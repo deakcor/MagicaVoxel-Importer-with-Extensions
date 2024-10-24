@@ -96,6 +96,6 @@ class VoxelMeshGenerator:
 			gen.ensure_surface_exists(surface_index, color, material);
 
 			for t in voxelSides:
-				gen.add_vertex(surface_index, yoffset + vox_to_godot.xform((t + voxel) * scale));
+				gen.add_vertex(surface_index, yoffset + vox_to_godot * ((t + voxel) * scale));
 
 		return gen.combine_surfaces();

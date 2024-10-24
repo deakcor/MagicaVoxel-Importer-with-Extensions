@@ -118,7 +118,7 @@ func generate(vox :VoxData, voxel_data :Dictionary, scale :float, snaptoground :
 
 	# Finish the mesh and material and return
 	st.generate_normals()
-	var material = SpatialMaterial.new()
+	var material = StandardMaterial3D.new()
 	material.vertex_color_is_srgb = true
 	material.vertex_color_use_as_albedo = true
 	material.roughness = 1
@@ -185,7 +185,7 @@ func generate_geometry_for_face(faces :Dictionary, face :Vector3, o :int, scale 
 
 	st.add_color(faces[face])
 	for vert in face_meshes[o]:
-		st.add_vertex(yoffset + vox_to_godot.xform(((vert * grow) + face) * scale))
+		st.add_vertex(yoffset + vox_to_godot * (((vert * grow) + face) * scale))
 	
 	# Remove these faces from the pool
 	var v :Vector3 = Vector3()

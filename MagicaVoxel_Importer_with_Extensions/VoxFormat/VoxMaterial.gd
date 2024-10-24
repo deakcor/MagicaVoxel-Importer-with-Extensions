@@ -1,24 +1,24 @@
 class_name VoxMaterial
 
 var properties = null;
-var material: SpatialMaterial = null;
+var material: StandardMaterial3D = null;
 
-var type setget ,get_type;
+var type : get = get_type;
 func get_type(): return properties["_type"];
 
-var weight setget ,get_weight;
+var weight : get = get_weight;
 func get_weight(): return float(properties["_weight"]);
 
-var specular setget ,get_specular;
+var specular : get = get_specular;
 func get_specular(): return float(properties["_spec"]);
 
-var roughness setget ,get_roughness;
+var roughness : get = get_roughness;
 func get_roughness(): return float(properties["_rough"]);
 
-var flux setget ,get_flux;
+var flux : get = get_flux;
 func get_flux(): return float(properties["_flux"]);
 
-var refraction setget ,get_refraction;
+var refraction : get = get_refraction;
 func get_refraction(): return float(properties["_ior"]);
 
 func _init(properties):
@@ -30,7 +30,7 @@ func is_glass():
 func get_material(color: Color):
 	if (material != null): return material;
 	
-	material = SpatialMaterial.new();
+	material = StandardMaterial3D.new();
 	material.vertex_color_is_srgb = true;
 	material.vertex_color_use_as_albedo = true;
 	

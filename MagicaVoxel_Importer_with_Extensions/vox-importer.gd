@@ -1,31 +1,31 @@
-tool
+@tool
 extends EditorImportPlugin
 
 func _init():
 	print('MagicaVoxel Importer: Ready')
 
-func get_importer_name():
+func _get_importer_name():
 	return 'MagicaVoxel.With.Extensions'
 
-func get_visible_name():
+func _get_visible_name():
 	return 'MagicaVoxel Mesh'
 
-func get_recognized_extensions():
+func _get_recognized_extensions():
 	return [ 'vox' ]
 
-func get_resource_type():
+func _get_resource_type():
 	return 'Mesh'
 
-func get_save_extension():
+func _get_save_extension():
 	return 'mesh'
 
-func get_preset_count():
+func _get_preset_count():
 	return 0
 
-func get_preset_name(_preset):
+func _get_preset_name(_preset):
 	return 'Default'
 
-func get_import_options(_preset):
+func _get_import_options(_preset):
 	return [
 		{
 			'name': 'Scale',
@@ -41,10 +41,10 @@ func get_import_options(_preset):
 		}
 	]
 
-func get_option_visibility(_option, _options):
+func _get_option_visibility(_option, _options):
 	return true
 
 func import(source_path, destination_path, options, _platforms, _gen_files):
 	var mesh = VoxImporter.import_mesh(source_path,options)
-	var full_path = "%s.%s" % [ destination_path, get_save_extension() ]
+	var full_path = "%s.%s" % [ destination_path, _get_save_extension() ]
 	return ResourceSaver.save(full_path, mesh)

@@ -42,9 +42,9 @@ class DataBuffer:
 		res |= a
 		return res
 	
-	func get_buffer(length)->PoolByteArray:
+	func get_buffer(length)->PackedByteArray:
 		pos+=length
-		return PoolByteArray(data.slice(pos-length,pos-1))
+		return PackedByteArray(data.slice(pos-length,pos-1))
 
 func _init(new_data: DataBuffer):
 	data_buffer = new_data
@@ -64,7 +64,7 @@ func get_32()->int:
 	chunk_size -= 4;
 	return data_buffer.get_32()
 	
-func get_buffer(length:int)->PoolByteArray:
+func get_buffer(length:int)->PackedByteArray:
 	chunk_size -= length
 	return data_buffer.get_buffer(length)
 

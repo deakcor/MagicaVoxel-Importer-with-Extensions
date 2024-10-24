@@ -8,7 +8,7 @@ func _init(file: File):
 	self.chunk_size = 0;
 
 func has_data_to_read(): 
-	return file.get_position() < file.get_len()
+	return file.get_position() < file.get_length()
 
 func set_chunk_size(size):
 	chunk_size = size;

@@ -3,7 +3,7 @@ class_name VoxImporter
 const debug_file = false
 const debug_models = false
 
-static func import_mesh_from_data(data:PoolByteArray,options={})->Mesh:
+static func import_mesh_from_data(data:PackedByteArray,options={})->Mesh:
 	var vox:VoxData = import_vox_from_data(data)
 	var mesh = create_mesh(vox,options)
 	return mesh
@@ -14,7 +14,7 @@ static func import_mesh(path,options={})->Mesh:
 	var mesh = create_mesh(vox,options)
 	return mesh
 
-static func load_materials_from_data(data:PoolByteArray)->Dictionary:
+static func load_materials_from_data(data:PackedByteArray)->Dictionary:
 	var vox:VoxData = import_vox_from_data(data)
 	var voxel_data:Dictionary = unify_voxels(vox).data
 	var mats:={}
@@ -41,27 +41,26 @@ static func create_mesh(vox:VoxData,options={})->Mesh:
 		mesh = CulledMeshGenerator.new().generate(vox, voxel_data, scale, snaptoground)
 	return mesh
 
-static func get_data(path:String)->PoolByteArray:
-	var file := File.new()
-	var err := file.open(path, File.READ)
-	if err != OK:
+static func get_data(path:String)->PackedByteArray:
+	var file := FileAccess.open(path, FileAccess.READ)
+	if file.get_open_error() != OK:
 		if file.is_open(): file.close()
-		return PoolByteArray()
+		return PackedByteArray()
 	
-	return file.get_buffer(file.get_len())
+	return file.get_buffer(file.get_length())
 
 static func import_vox(path:String)->VoxData:
-	var data:PoolByteArray=get_data(path)
+	var data:PackedByteArray=get_data(path)
 	return import_vox_from_data(data)
 
-static func import_vox_from_data(data:PoolByteArray)->VoxData:
+static func import_vox_from_data(data:PackedByteArray)->VoxData:
 	var data_buffer = VoxFileData.DataBuffer.new(data)
 	var vox_file_data = VoxFileData.new(data_buffer)
 	var res:=[]
 	for k in 4:
 		res.push_back(vox_file_data.get_8())
 	var version = vox_file_data.get_32()
-	var identifier = PoolByteArray(res).get_string_from_ascii()
+	var identifier = PackedByteArray(res).get_string_from_ascii()
 	var vox = VoxData.new()
 	if identifier == 'VOX ':
 		while vox_file_data.has_data_to_read():
@@ -121,13 +120,13 @@ static func read_chunk(vox: VoxData, file_data):
 
 			if debug_file:
 				print('nTRN[', node_id, '] -> ', child)
-				if (!attributes.empty()): print('\t', attributes)
+				if (!attributes.is_empty()): print('\t', attributes)
 			for _frame in range(num_of_frames):
 				var frame_attributes = file_data.get_vox_dict()
 				if (frame_attributes.has('_t')):
 					var trans = frame_attributes['_t']
-					node.translation = string_to_vector3(trans)
-					if debug_file: print('\tT: ', node.translation)
+					node.position = string_to_vector3(trans)
+					if debug_file: print('\tT: ', node.position)
 				if (frame_attributes.has('_r')):
 					var rot = frame_attributes['_r']
 					node.rotation = byte_to_basis(int(rot))
@@ -143,7 +142,7 @@ static func read_chunk(vox: VoxData, file_data):
 				node.child_nodes.append(file_data.get_32())
 			if debug_file:
 				print('nGRP[', node_id, '] -> ', node.child_nodes)
-				if (!attributes.empty()): print('\t', attributes)
+				if (!attributes.is_empty()): print('\t', attributes)
 		'nSHP':
 			var node_id = file_data.get_32()
 			var attributes = file_data.get_vox_dict()
@@ -156,7 +155,7 @@ static func read_chunk(vox: VoxData, file_data):
 				file_data.get_vox_dict()
 			if debug_file:
 				print('nSHP[', node_id,'] -> ', node.models)
-				if (!attributes.empty()): print('\t', attributes)
+				if (!attributes.is_empty()): print('\t', attributes)
 		'MATL':
 			var material_id = file_data.get_32() - 1
 			var properties = file_data.get_vox_dict()
@@ -180,7 +179,7 @@ static func get_voxels(node: VoxNode, vox: VoxData)->VoxelData:
 			var child_data = get_voxels(child, vox)
 			data.combine_data(child_data)
 		data.rotate(node.rotation.inverse())
-		data.translate(node.translation)
+		data.translate(node.position)
 	return data
 
 
