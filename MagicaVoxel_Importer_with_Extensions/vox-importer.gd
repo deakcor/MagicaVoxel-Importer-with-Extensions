@@ -25,7 +25,7 @@ func _get_preset_count():
 func _get_preset_name(_preset):
 	return 'Default'
 
-func _get_import_options(_preset):
+func _get_import_options(_path: String, _preset_index: int) -> Array[Dictionary]:
 	return [
 		{
 			'name': 'Scale',
@@ -41,7 +41,7 @@ func _get_import_options(_preset):
 		}
 	]
 
-func _get_option_visibility(_option, _options):
+func _get_option_visibility(_path: String, _option_name: StringName, _options: Dictionary):
 	return true
 
 func import(source_path, destination_path, options, _platforms, _gen_files):

@@ -1,9 +1,9 @@
 class_name VoxFile
 
-var file: File;
+var file: FileAccess;
 var chunk_size = 0;
 
-func _init(file: File):
+func _init(file: FileAccess):
 	self.file = file;
 	self.chunk_size = 0;
 
